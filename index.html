@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  /* 仅在手机/平板（屏幕宽度小于 768px）生效 */
+  @media screen and (max-width: 768px) {
+    
+    /* 强制重置表格结构：解决重叠的核心 */
+    table, thead, tbody, tr, td { 
+      display: block !important; 
+      width: 100% !important; 
+      height: auto !important;      /* 解决重叠：删除固定高度 */
+      min-height: 0 !important;     /* 解决重叠：重置最小高度 */
+      position: static !important;  /* 解决重叠：防止绝对定位漂浮 */
+      float: none !important;       /* 解决错乱：防止浮动导致位置偏移 */
+      box-sizing: border-box !important;
+      overflow: visible !important; /* 确保内容不会被裁切 */
+    }
+
+    /* 优化单元格（现在的每一行）的外观 */
+    td {
+      text-align: center !important;
+      padding: 15px 10px !important; /* 给内容留出上下呼吸空间 */
+      border-bottom: 1px solid #eee !important; /* 单元格之间加一条浅色分割线 */
+      white-space: normal !important; /* 解决错乱：强制文字自动换行 */
+    }
+
+    /* 隐藏表格中可能存在的空单元格（通常是用来占位的） */
+    td:empty {
+      display: none !important;
+    }
+
+    /* 图片完美适配：防止撑破屏幕 */
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block !important;
+      margin: 10px auto !important; /* 图片上下留白并居中 */
+    }
+
+    /* YouTube 视频与 Iframe 适配 */
+    iframe {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 16 / 9; /* 保持标准视频比例 */
+      border: none !important;
+    }
+  }
+</style>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>useful</title>
+    <meta name="author" content="chen">
+  </head>
+  <body>
+    <p>useful</p>
+    <p><a href="fy.html" title="translator" target="_blank">全能翻译官</a>-用gemini做的翻
+      译应用网页版，可以在中文和英语和罗马尼亚语之间互译。<br>
+    </p>
+    <p><br>
+    </p>
+  </body>
+</html>
