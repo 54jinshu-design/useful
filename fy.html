@@ -9,174 +9,179 @@
     <p>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-      <title>持续收听翻译官</title>
+      <title>极速翻译-性别自定义版</title>
       <script src="https://cdn.tailwindcss.com"></script>
       <style>
-        body { background: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-family: system-ui, -apple-system; }
+        body { background: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-family: sans-serif; }
         #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
-        /* 超大字号气泡 */
-        .bubble { padding: 18px 22px; border-radius: 24px; max-width: 92%; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .bubble-left { align-self: flex-start; background: #1f2937; border-bottom-left-radius: 4px; border-left: 6px solid #3b82f6; }
+        .bubble { padding: 18px 22px; border-radius: 24px; max-width: 92%; position: relative; border: 1px solid rgba(255,255,255,0.1); }
+        .bubble-left { align-self: flex-start; background: #262626; border-bottom-left-radius: 4px; border-left: 6px solid #3b82f6; }
         .bubble-right { align-self: flex-end; background: #064e3b; border-bottom-right-radius: 4px; border-right: 6px solid #10b981; }
-        /* 翻译文字加大加粗 */
-        .target-text { font-size: 24px; font-weight: 800; line-height: 1.3; color: #ffffff; }
-        .origin-text { font-size: 14px; opacity: 0.5; margin-bottom: 6px; }
-        
-        .active-mic { background: #ef4444 !important; animation: pulse 1s infinite; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .target-text { font-size: 26px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; color: #fff; }
+        .origin-text { font-size: 14px; opacity: 0.5; }
+        .play-btn { background: #3b82f6; color: white; padding: 8px 16px; border-radius: 12px; font-size: 15px; font-weight: bold; display: inline-block; margin-top: 10px; cursor: pointer; }
+        .play-btn:active { transform: scale(0.95); opacity: 0.8; }
+        .active-mic { background: #ef4444 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        select, .gender-toggle { background: #333; color: white; border-radius: 8px; padding: 6px 12px; font-size: 14px; border: 1px solid #444; cursor: pointer; }
+        .gender-toggle:active { background: #444; }
     </style> </p>
-    <header class="p-4 border-b border-zinc-800 bg-zinc-900 flex justify-between items-center">
-      <div class="flex gap-2">
-        <select id="leftLang" class="bg-blue-900 text-white rounded px-2 py-1 text-sm font-bold">
-          <option value="zh-CN">🇨🇳 中文</option>
-          <option value="en-US">🇺🇸 英语</option>
-          <option value="ro-RO">🇷🇴 罗语</option>
-        </select>
-        <select id="rightLang" class="bg-emerald-900 text-white rounded px-2 py-1 text-sm font-bold">
-          <option value="ro-RO">🇷🇴 罗语</option>
-          <option value="en-US">🇺🇸 英语</option>
-          <option value="zh-CN">🇨🇳 中文</option>
-        </select>
+    <header class="p-4 border-b border-zinc-800 bg-zinc-900 flex flex-col gap-3">
+      <div class="flex justify-between items-center text-blue-500 font-bold"> <span>全
+          能翻译官 (交互定制版)</span> <button onclick="copyAll()" class="text-[10px] bg-zinc-700 text-white px-2 py-1 rounded">导
+          出记录</button> </div>
+      <div class="flex justify-between items-center bg-black/40 p-2 rounded-xl">
+        <div class="flex flex-col items-center gap-2">
+          <select id="leftLang" class="w-24">
+            <option value="zh-CN">🇨🇳 中文</option>
+            <option value="en-US">🇺🇸 英语</option>
+            <option value="ro-RO">🇷🇴 罗语</option>
+          </select>
+          <button id="sex-left" onclick="toggleSex('left')" class="gender-toggle text-blue-400">👨
+            我方(男)</button> </div>
+        <div class="text-zinc-600">⇄</div>
+        <div class="flex flex-col items-center gap-2">
+          <select id="rightLang" class="w-24">
+            <option value="ro-RO" selected="selected">🇷🇴 罗语</option>
+            <option value="en-US">🇺🇸 英语</option>
+            <option value="zh-CN">🇨🇳 中文</option>
+          </select>
+          <button id="sex-right" onclick="toggleSex('right')" class="gender-toggle text-emerald-400">👩
+            对方(女)</button> </div>
       </div>
-      <button onclick="copyAll()" class="text-xs bg-zinc-700 px-3 py-1 rounded-full">导
-        出历史</button> </header>
-    <div id="chat">
-      <div class="text-center text-zinc-600 text-sm my-10">模式：持续收听、超大字体<br>
-        点击下方麦克风后可一直说话</div>
-    </div>
-    <div id="preview" class="px-6 py-3 bg-zinc-900/80 text-blue-400 text-xl font-bold min-h-[50px] border-t border-zinc-800"></div>
+    </header>
+    <div id="chat"></div>
+    <div id="preview" class="px-6 py-3 bg-zinc-900 text-blue-400 text-xl font-bold min-h-[50px] border-t border-zinc-800 italic"></div>
     <div class="p-4 bg-black pb-10">
-      <div class="flex gap-4 h-24">
+      <div class="flex gap-4 h-20">
         <div class="flex-1 flex gap-2"> <button onclick="toggleMic('left')" id="mic-left"
-            class="flex-1 bg-blue-600 rounded-3xl flex flex-col items-center justify-center">
-            <span class="text-2xl">🎤</span> <span class="font-bold">开启收听</span>
-          </button> <button onclick="showInput('left')" class="w-14 bg-zinc-800 rounded-3xl text-2xl">⌨️</button>
+            class="flex-1 bg-blue-600 rounded-3xl flex flex-col items-center justify-center font-bold">🎤
+            开启收听</button> <button onclick="showInput('left')" class="w-12 bg-zinc-800 rounded-3xl text-xl">⌨️</button>
         </div>
-        <div class="flex-1 flex gap-2"> <button onclick="showInput('right')" class="w-14 bg-zinc-800 rounded-3xl text-2xl">⌨️</button>
-          <button onclick="toggleMic('right')" id="mic-right" class="flex-1 bg-emerald-600 rounded-3xl flex flex-col items-center justify-center">
-            <span class="text-2xl">🎤</span> <span class="font-bold">开启收听</span>
-          </button> </div>
+        <div class="flex-1 flex gap-2"> <button onclick="showInput('right')" class="w-12 bg-zinc-800 rounded-3xl text-xl">⌨️</button>
+          <button onclick="toggleMic('right')" id="mic-right" class="flex-1 bg-emerald-600 rounded-3xl flex flex-col items-center justify-center font-bold">🎤
+            开启收听</button> </div>
       </div>
     </div>
     <div id="inputModal" class="fixed inset-0 bg-black/95 hidden items-center justify-center p-6 z-50">
       <div class="bg-zinc-800 w-full rounded-3xl p-6"> <textarea id="manualText"
 class="w-full bg-black border border-zinc-700 rounded-2xl p-4 text-white text-2xl focus:outline-none"
-rows="3" placeholder="打字翻译..."></textarea>
-        <div class="flex gap-4 mt-6"> <button onclick="hideInput()" class="flex-1 py-5 bg-zinc-700 rounded-2xl text-xl">取
-            消</button> <button onclick="submitManual()" class="flex-1 py-5 bg-blue-600 rounded-2xl font-bold text-xl">翻
-            译并发送</button> </div>
+rows="3"></textarea>
+        <div class="flex gap-4 mt-6"> <button onclick="hideInput()" class="flex-1 py-4 bg-zinc-700 rounded-2xl">取
+            消</button> <button onclick="submitManual()" class="flex-1 py-4 bg-blue-600 rounded-2xl font-bold">确
+            定</button> </div>
       </div>
     </div>
     <script>
-    let recognition = null;
-    let isListening = false;
-    let currentSide = null;
+    let recognition = null, isListening = false, currentSide = null;
+    let lastText = "";
+    // 默认性别状态
+    let sexSettings = { left: 'male', right: 'female' };
+
+    function toggleSex(side) {
+        sexSettings[side] = (sexSettings[side] === 'male') ? 'female' : 'male';
+        const btn = document.getElementById(`sex-${side}`);
+        const label = (side === 'left') ? '我方' : '对方';
+        btn.innerText = sexSettings[side] === 'male' ? `👨 ${label}(男)` : `👩 ${label}(女)`;
+    }
 
     function toggleMic(side) {
-        if (isListening && currentSide === side) {
-            stopMic();
-            return;
-        }
+        if (isListening && currentSide === side) { stopMic(); return; }
         if (isListening) stopMic();
         startListening(side);
     }
 
     function startListening(side) {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Speech) return alert("浏览器不支持语音");
-
+        if (!Speech) return;
         recognition = new Speech();
         recognition.lang = document.getElementById(side === 'left' ? 'leftLang' : 'rightLang').value;
-        
-        // 【关键改动】持续模式：不因为停顿而关闭
         recognition.continuous = true;
         recognition.interimResults = true;
-        
-        currentSide = side;
-        isListening = true;
+        currentSide = side; isListening = true;
         document.getElementById(`mic-${side}`).classList.add('active-mic');
-        document.getElementById(`mic-${side}`).querySelector('span:last-child').innerText = "正在收听...";
-
+        document.getElementById(`mic-${side}`).innerText = "⏹ 停止收听";
+        
         recognition.onresult = (e) => {
             let interim = '';
             for (let i = e.resultIndex; i < e.results.length; ++i) {
+                const text = e.results[i][0].transcript.trim();
                 if (e.results[i].isFinal) {
-                    handleTranslate(e.results[i][0].transcript, side);
-                } else {
-                    interim += e.results[i][0].transcript;
-                }
+                    if (text !== lastText) { handleTranslate(text, side); lastText = text; setTimeout(()=>lastText="", 3000); }
+                } else { interim += text; }
             }
             document.getElementById('preview').innerText = interim;
         };
-
-        recognition.onerror = stopMic;
-        recognition.onend = () => { if(isListening) recognition.start(); }; // 意外断开自动重启
+        recognition.onend = () => { if(isListening) recognition.start(); };
         recognition.start();
     }
 
     function stopMic() {
-        isListening = false;
-        if (recognition) { recognition.onend = null; recognition.stop(); }
-        document.querySelectorAll('[id^="mic-"]').forEach(b => {
+        isListening = false; if (recognition) { recognition.onend = null; recognition.stop(); }
+        document.querySelectorAll('[id^="mic-"]').forEach((b, i) => {
             b.classList.remove('active-mic');
-            b.querySelector('span:last-child').innerText = "开启收听";
+            b.innerText = "🎤 开启收听";
         });
         document.getElementById('preview').innerText = "";
-        currentSide = null;
     }
 
     async function handleTranslate(text, fromSide) {
-        if (!text.trim()) return;
-        const sl = document.getElementById(fromSide === 'left' ? 'leftLang' : 'rightLang').value.split('-')[0];
-        const tl = document.getElementById(fromSide === 'left' ? 'rightLang' : 'leftLang').value.split('-')[0];
-        
+        if (!text) return;
+        const leftLang = document.getElementById('leftLang').value;
+        const rightLang = document.getElementById('rightLang').value;
+        const sl = (fromSide === 'left' ? leftLang : rightLang).split('-')[0];
+        const tl = (fromSide === 'left' ? rightLang : leftLang).split('-')[0];
         try {
             const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`);
             const data = await res.json();
             const result = data[0][0][0];
-            renderBubble(text, result, fromSide);
-            speak(result, tl);
+            // 获取当前发起方的性别设定
+            const currentGender = sexSettings[fromSide];
+            renderBubble(text, result, fromSide, tl, currentGender);
         } catch (e) {}
     }
 
-    function renderBubble(origin, target, side) {
+    function renderBubble(origin, target, side, lang, gender) {
         const chat = document.getElementById('chat');
         const div = document.createElement('div');
+        // 右侧为我发起的翻译，左侧为对方发起的翻译
         div.className = `bubble ${side === 'left' ? 'bubble-right' : 'bubble-left'}`;
-        div.innerHTML = `<div class="origin-text">${origin}</div><div class="target-text">${target}</div>`;
-        
-        div.onclick = () => {
-            navigator.clipboard.writeText(target);
-            alert("已复制翻译内容");
-        };
-
+        div.innerHTML = `
+            <div class="origin-text">${origin}</div>
+            <div class="target-text">${target}</div>
+            <div class="play-btn" onclick="playVoice('${target.replace(/'/g,"")}', '${lang}', '${gender}')">
+                🔊 播放${gender==='male'?'男声':'女声'}
+            </div>
+        `;
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
-        
-        // 自动存入本地
-        const history = JSON.parse(localStorage.getItem('h_pro') || '[]');
-        history.push({ origin, target, side });
-        localStorage.setItem('h_pro', JSON.stringify(history));
+        saveHistory(origin, target, side);
     }
 
-    function speak(text, lang) {
+    function playVoice(text, lang, gender) {
+        window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = lang === 'ro' ? 'ro-RO' : (lang === 'zh' ? 'zh-CN' : 'en-US');
+        
+        if (gender === 'male') {
+            msg.pitch = 0.75; 
+            msg.rate = 0.9;   
+        } else {
+            msg.pitch = 1.35; 
+            msg.rate = 1.05;  
+        }
         window.speechSynthesis.speak(msg);
     }
 
     function showInput(side) { currentSide = side; document.getElementById('inputModal').style.display = 'flex'; document.getElementById('manualText').focus(); }
     function hideInput() { document.getElementById('inputModal').style.display = 'none'; document.getElementById('manualText').value = ""; }
-    function submitManual() { const text = document.getElementById('manualText').value.trim(); if (text) { handleTranslate(text, currentSide); hideInput(); } }
-    
+    function submitManual() { const t = document.getElementById('manualText').value.trim(); if(t){handleTranslate(t, currentSide); hideInput();} }
+    function saveHistory(o, t, s) { const h = JSON.parse(localStorage.getItem('h_custom') || '[]'); h.push({o, t, s}); localStorage.setItem('h_custom', JSON.stringify(h)); }
     function copyAll() {
-        const h = JSON.parse(localStorage.getItem('h_pro') || '[]');
-        const content = h.map(x => `${x.origin} -> ${x.target}`).join('\n\n');
+        const h = JSON.parse(localStorage.getItem('h_custom') || '[]');
+        const content = h.map(x => `${x.s==='left'?'我方':'对方'}: ${x.o} -> ${x.t}`).join('\n\n');
         const blob = new Blob(['\ufeff' + content], { type: 'text/plain;charset=utf-8' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `翻译记录.txt`;
-        a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `翻译记录.txt`; a.click();
     }
 </script><br>
     <p></p>
